@@ -1,0 +1,7 @@
+defaults:
+  - batch_transforms: road
+  - _self_
+
+instance_transforms:
+  train: null
+  inference: null

@@ -1,0 +1,2 @@
+_target_: src.model.CNN_Model
+num_classes: 2
