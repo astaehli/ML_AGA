@@ -96,7 +96,7 @@ class RoadDataset(BaseDataset):
         # images = sorted(data_path_images.glob("*.png"))  # Adjust extension as needed
         # images_gt = sorted(data_path_gt.glob("*.png"))
 
-        len_data = int(len(train_data)/10) if name == 'train' else int(len(train_data))
+        len_data = int(len(train_data)) if name == 'train' else int(len(train_data))
 
         for i in tqdm(range(len_data)):
             
