@@ -111,7 +111,3 @@ outputs/
 .vscode/
 .idea/
 __MACOSX/
-
-# models
-models/
-*.pth
