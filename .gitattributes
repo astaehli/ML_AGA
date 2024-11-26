@@ -1,2 +1,5 @@
 models/ filter=lfs diff=lfs merge=lfs -text
 models/finetuned_segformer_5.pth filter=lfs diff=lfs merge=lfs -text
+models/finetuned_segformer_5_OLD.pth filter=lfs diff=lfs merge=lfs -text
+models/finetuned_segformer_10.pth filter=lfs diff=lfs merge=lfs -text
+models/finetuned_segformer_optimizer_10.pth filter=lfs diff=lfs merge=lfs -text
