@@ -1,3 +1,4 @@
+print("Importing libraries...")
 import numpy as np
 import os
 import matplotlib.pyplot as plt
@@ -14,8 +15,9 @@ from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_sc
 from tqdm.notebook import tqdm
 import wandb
 
-from segformer_train import SemanticSegmentationDataset
 from mask_to_submission import masks_to_submission
+
+print("Libraries imported. Loading model and validation dataset...")
 
 # Set seed for reproducibility
 seed = 42
@@ -34,6 +36,59 @@ os.environ["NUMEXPR_NUM_THREADS"] = "1"
 os.environ["PYTHONHASHSEED"] = str(seed)  # Prevent hash-based randomness in Python
 
 # Get validation dataset
+
+class SemanticSegmentationDataset(Dataset):
+    """Image (semantic) segmentation dataset."""
+
+    def __init__(self, root_dir, image_processor, train=True):
+        """
+        Args:
+            root_dir (string): Root directory of the dataset containing the images + annotations.
+            image_processor (SegFormerImageProcessor): image processor to prepare images + segmentation maps.
+            train (bool): Whether to load "training" or "validation" images + annotations.
+        """
+        self.root_dir = root_dir
+        self.image_processor = image_processor
+        self.train = train
+
+        sub_path = "training" if self.train else "validation"
+        self.img_dir = os.path.join(self.root_dir, sub_path, "images")
+        self.ann_dir = os.path.join(self.root_dir, sub_path, "groundtruth")
+
+        # read images
+        image_file_names = []
+        for root, dirs, files in os.walk(self.img_dir):
+          if root.split("/")[-1] != "images":
+            files = [root.split("/")[-1] + "/" + f for f in files]
+          image_file_names.extend(files)
+        self.images = sorted(image_file_names)
+
+        # read annotations
+        annotation_file_names = []
+        for root, dirs, files in os.walk(self.ann_dir):
+          if root.split("/")[-1] != "groundtruth":
+            files = [root.split("/")[-1] + "/" + f for f in files]
+          annotation_file_names.extend(files)
+        self.annotations = sorted(annotation_file_names)
+
+        assert len(self.images) == len(self.annotations), "There must be as many images as there are segmentation maps"
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+
+        image = Image.open(os.path.join(self.img_dir, self.images[idx]))
+        segmentation_map = Image.open(os.path.join(self.ann_dir, self.annotations[idx]))
+
+        # randomly crop + pad both image and segmentation map to same size
+        encoded_inputs = self.image_processor(image, segmentation_map, return_tensors="pt")
+
+        for k,v in encoded_inputs.items():
+          encoded_inputs[k].squeeze_() # remove batch dimension
+
+        return encoded_inputs
+
 root_dir = './data'
 image_processor = SegformerImageProcessor(reduce_labels=False, do_resize=False)
 valid_dataset = SemanticSegmentationDataset(root_dir=root_dir, image_processor=image_processor, train=False)
@@ -58,6 +113,7 @@ model_path = "./models/finetuned_segformer_10.pth"
 model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 print(f"Model state dict loaded from {model_path}")
 
+print("Model and validation dataset loaded. Evaluating model on validation dataset...")
 # Evaluate the validation dataset
 model.eval()  # Set model to evaluation mode
 validation_loss = 0.0
@@ -111,6 +167,8 @@ print(f"Validation Recall: {pixelwise_recall_val:.4f}")
 print(f"Validation Precision: {pixelwise_precision_val:.4f}")
 print(f"Validation Accuracy: {pixelwise_accuracy_val:.4f}")
 
+print("Using model on test dataset...")
+
 # Process test images
 images = sorted(os.listdir("./data/test"))
 
@@ -137,13 +195,17 @@ for im in images:
 
     # Save the segmentation map
     segm_im = Image.fromarray(predicted_segmentation_map)
-    segm_im.save(f"/content/drive/MyDrive/road_seg/data/test/{im}/{im}_pred_segformer_ft_10.png")
+    segm_im.save(f"./data/test/{im}/{im}_pred_segformer_ft_10.png")
+
+print("Test images processed. Creating submission file...")
 
 # Create submission file
 submission_filename = 'submission_segformer_ft_10.csv'
 image_filenames = []
 for i in range(1, 51):
-    image_filename = f"/content/drive/MyDrive/road_seg/data/test/test_{i}/test_{i}_pred_segformer_ft_10.png"
+    image_filename = f"./data/test/test_{i}/test_{i}_pred_segformer_ft_10.png"
     # print(image_filename)
     image_filenames.append(image_filename)
 masks_to_submission(submission_filename, *image_filenames)
+
+print("Submission file created. Done!")
