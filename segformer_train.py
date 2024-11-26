@@ -138,6 +138,7 @@ print("Starting training")
 model.train()
 for epoch in range(epochs):  # loop over the dataset multiple times
   print("Epoch:", epoch+1)
+  model.train()
   for idx, batch in enumerate(tqdm(train_dataloader)):
     # Get the inputs;
     pixel_values = batch["pixel_values"].to(device)
