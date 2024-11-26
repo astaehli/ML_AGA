@@ -54,7 +54,7 @@ model = SegformerForSemanticSegmentation.from_pretrained("nvidia/mit-b5",
 )
 
 # Load the model state dict
-model_path = "./models/finetuned_segformer_5.pth" 
+model_path = "./models/finetuned_segformer_10.pth" 
 model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 print(f"Model state dict loaded from {model_path}")
 
@@ -137,13 +137,13 @@ for im in images:
 
     # Save the segmentation map
     segm_im = Image.fromarray(predicted_segmentation_map)
-    segm_im.save(f"/content/drive/MyDrive/road_seg/data/test/{im}/{im}_pred_segformer_ft_5.png")
+    segm_im.save(f"/content/drive/MyDrive/road_seg/data/test/{im}/{im}_pred_segformer_ft_10.png")
 
 # Create submission file
-submission_filename = 'submission_segformer_ft_5.csv'
+submission_filename = 'submission_segformer_ft_10.csv'
 image_filenames = []
 for i in range(1, 51):
-    image_filename = f"/content/drive/MyDrive/road_seg/data/test/test_{i}/test_{i}_pred_segformer_ft_5.png"
+    image_filename = f"/content/drive/MyDrive/road_seg/data/test/test_{i}/test_{i}_pred_segformer_ft_10.png"
     # print(image_filename)
     image_filenames.append(image_filename)
 masks_to_submission(submission_filename, *image_filenames)
