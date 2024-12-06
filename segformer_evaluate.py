@@ -202,7 +202,7 @@ for im in images:
 print("Test images processed. Creating submission file...")
 
 # Create submission file
-submission_filename = 'submission__segformer_ft_geocropdeg_15.csv'
+submission_filename = 'submission_segformer_ft_geocropdeg_15.csv'
 image_filenames = []
 for i in range(1, 51):
     image_filename = f"./data/test/test_{i}/test_{i}_pred_segformer_ft_geocropdeg_15.png"
