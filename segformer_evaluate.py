@@ -12,7 +12,7 @@ from transformers import SegformerImageProcessor, SegformerForSemanticSegmentati
 from PIL import Image
 import evaluate
 from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
-from tqdm.notebook import tqdm
+# from tqdm.notebook import tqdm
 import wandb
 
 from mask_to_submission import masks_to_submission
@@ -109,7 +109,7 @@ model = SegformerForSemanticSegmentation.from_pretrained("nvidia/mit-b5",
 )
 
 # Load the model state dict
-model_path = "./models/finetuned_segformer_10.pth" 
+model_path = "./models/finetuned_segformer_15_geocropdeg.pth" 
 model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 print(f"Model state dict loaded from {model_path}")
 
@@ -120,7 +120,7 @@ validation_loss = 0.0
 all_preds = []
 all_labels = []
 with torch.no_grad():
-    for val_batch in tqdm(valid_dataloader, desc="Validation"):
+    for val_batch in valid_dataloader:
         # Get the inputs
         pixel_values = val_batch["pixel_values"].to(device)
         labels = val_batch["labels"].div(255).round().long().to(device)
@@ -171,6 +171,8 @@ print("Using model on test dataset...")
 
 # Process test images
 images = sorted(os.listdir("./data/test"))
+images = [im for im in images if im.startswith("test")]
+images = [im for im in images if os.path.isdir(f"./data/test/{im}")]
 
 for im in images:
     print(im)
@@ -195,15 +197,15 @@ for im in images:
 
     # Save the segmentation map
     segm_im = Image.fromarray(predicted_segmentation_map)
-    segm_im.save(f"./data/test/{im}/{im}_pred_segformer_ft_10.png")
+    segm_im.save(f"./data/test/{im}/{im}_pred_segformer_ft_geocropdeg_15.png")
 
 print("Test images processed. Creating submission file...")
 
 # Create submission file
-submission_filename = 'submission_segformer_ft_10.csv'
+submission_filename = 'submission__segformer_ft_geocropdeg_15.csv'
 image_filenames = []
 for i in range(1, 51):
-    image_filename = f"./data/test/test_{i}/test_{i}_pred_segformer_ft_10.png"
+    image_filename = f"./data/test/test_{i}/test_{i}_pred_segformer_ft_geocropdeg_15.png"
     # print(image_filename)
     image_filenames.append(image_filename)
 masks_to_submission(submission_filename, *image_filenames)
