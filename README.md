@@ -29,16 +29,44 @@ Key components of the project include:
 - Advanced post-processing techniques to refine segmentation.
 - Ethical risk assessment and sustainability considerations in machine learning projects.
 
+## Post-Processing
+
+Post-processing techniques were applied to refine the outputs of the segmentation models and improve overall performance. Two primary approaches were utilized:
+
+### 1. Morphological Operations
+
+Morphological operations such as erosion, dilation, opening, and closing were employed to enhance the smoothness of the binary segmentation outputs. These techniques are especially useful for correcting small errors in road boundaries. 
+
+- **Erosion and Dilation:** These operations adjust the size of detected road regions. While erosion removes small false positives, dilation expands true positives.
+- **Opening and Closing:** Combined operations were used to balance removal of noise and preservation of road shapes, providing minor improvements in segmentation accuracy.
+
+### 2. Conditional Random Fields (CRFs)
+
+Conditional Random Fields were used as a refinement step to improve the connectivity and sharpness of road segment predictions:
+- **Pairwise Gaussians:** Fully-connected CRFs applied pairwise Gaussian potentials to penalize discontinuities between nearby pixels, enhancing smoothness and connectivity of road networks.
+- **Custom Hyperparameters:** Specific tuning of CRF parameters improved performance by adapting to the long and thin nature of roads, as well as their orientation.
+
+CRFs demonstrated their utility in filling gaps in road segments and ensuring that road edges were more sharply defined. However, care was needed to avoid over-smoothing, particularly in areas with complex road intersections.
+
+Overall, the combination of these post-processing techniques resulted in more polished and accurate segmentation outputs.
+
+
 ---
 
 ## Usage
 
-### Training
+### Reproducibility
 
 To train the SegFormer model:
 ```bash
-python segformer_train.py
+segformer_train.py
 ```
+subsequently to evaluate and create the submissions:
+```bash
+segformer_evaluate.py
+```
+
+
 
 
 
