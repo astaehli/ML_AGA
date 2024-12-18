@@ -36,6 +36,8 @@ class SemanticSegmentationDataset(Dataset):
         # read images
         image_file_names = []
         for root, dirs, files in os.walk(self.img_dir):
+          if root.split("/")[-1] not in ["images", "set_rotations", "random_rotations", "flips", "cropresize", "blurs", "noises"]:
+            continue
           if root.split("/")[-1] != "images":
             files = [root.split("/")[-1] + "/" + f for f in files]
           image_file_names.extend(files)
@@ -44,6 +46,8 @@ class SemanticSegmentationDataset(Dataset):
         # read annotations
         annotation_file_names = []
         for root, dirs, files in os.walk(self.ann_dir):
+          if root.split("/")[-1] not in ["groundtruth", "set_rotations", "random_rotations", "flips", "cropresize", "blurs", "noises"]:
+            continue
           if root.split("/")[-1] != "groundtruth":
             files = [root.split("/")[-1] + "/" + f for f in files]
           annotation_file_names.extend(files)
@@ -69,7 +73,7 @@ class SemanticSegmentationDataset(Dataset):
 
 # Set training parameters
 batch_size = 4
-epochs = 10
+epochs = 15
 
 # Set seed for reproducibility
 seed = 42
