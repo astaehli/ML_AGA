@@ -6,7 +6,7 @@ This repository contains the implementation and analysis of the **RoadFormer** p
 
 ## Reproducibility
 
-In order to rerun the code and reproduce the AI Crowd scores, use the files `segformer_train.py` and `segformer_evaluate.py`. These scripts contain the complete setup and configurations required for training and evaluating the SegFormer model.
+In order to rerun the code and reproduce the AI Crowd scores, use the files `segformer_train.py` and `segformer_evaluate.py`. These scripts contain the complete setup and configurations required for training and evaluating the SegFormer model, and generating the submission file.
 
 ---
 
@@ -59,8 +59,9 @@ Overall, the combination of these post-processing techniques resulted in more po
 
 ## Usage
 
-### Reproducibility
+### Main files for reproducibility
 
+The two main files for the training and use of the SegFormer model are as follows:
 To train the SegFormer model:
 ```bash
 segformer_train.py
@@ -70,9 +71,60 @@ subsequently to evaluate and create the submissions:
 segformer_evaluate.py
 ```
 
+### Other relevant files
 
+The data augmentation functions are found in:
+```bash
+data_augmentation.py
+```
+The data augmentation itself is done in:
+```bash
+data_augmentation.ipynb
+```
 
+The post-processing can also be followed in:
+```bash
+post_processing.ipynb
+```
 
+Experiments on majority voting are found in:
+```bash
+majority_voting.ipynb
+```
+
+Files pertaining to the DeepLabV3+ model are in:
+```bash
+DeepLabV3Plus.ipynb
+```
+and
+```bash
+DeepLabV3Plus_test.ipynb
+```
+
+All data is stored in the folder:
+```bash
+data
+```
+This includes training, validation, and test data.
+Data augmentations are stored in their respective folders within the training and validation folders.
+
+All relevant models are in the folder:
+```bash
+models
+```
+Among these, the highest-performing model is the model:
+```bash
+finetuned_segformer_15_geocropdeg.pth
+```
+
+Finally, a set of submissions can be found in the folder:
+```bash
+submissions
+```
+Among these, the final result is:
+```bash
+submission_postprocessed2_segformer_ft_geocropdeg_15.csv
+```
 
 ## Results
 
