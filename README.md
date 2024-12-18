@@ -50,6 +50,10 @@ CRFs demonstrated their utility in filling gaps in road segments and ensuring th
 
 Overall, the combination of these post-processing techniques resulted in more polished and accurate segmentation outputs.
 
+### Output of the models & Comparison with groundtruth
+
+![Models Output and Groundtruth](data/val_1_example.png "Example of Segmentations")
+
 
 ---
 
